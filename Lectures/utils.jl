@@ -1,25 +1,43 @@
 begin
-    include(joinpath(@__DIR__, "Biblio.jl"))
-    Biblio.load!()
-    function cite(keys::Vector{String})
-        return "[" * join(Biblio.citation_key.([Biblio.BIB[key] for key in keys]), ", ") * "]"
+    function load_biblio!(file = joinpath(@__DIR__, "biblio.bib"); style = DocumenterCitations.AlphaStyle())
+        @info("Loading bibliography from `$file`...")
+        biblio = DocumenterCitations.CitationBibliography(file; style)
+        DocumenterCitations.init_bibliography!(style, biblio)
+        @info("Loading completed.")
+        return biblio
     end
-    cite(key::String, args...) = Biblio.cite(Biblio.BIB[key], args...)
-    function _print_entry(io, key; links = false, kws...)
-        Biblio.print_entry(io, key; links, kws...)
+    citation_label(biblio, key::String) = DocumenterCitations.format_bibliography_label(biblio.style, biblio.entries[key], biblio.citations)
+    function bibcite(biblio, keys::Vector{String})
+        return "[" * join(citation_label.(Ref(biblio), keys), ", ") * "]"
     end
-	function bib(key::String; kws...)
+    bibcite(biblio, key::String) = bibcite(biblio, [key])
+    function bibcite(biblio, key::String, what)
+        return "[" * citation_label(biblio, key) * "; " * what * "]"
+    end
+    function citation_reference(biblio, key::String)
+        # Otherwise we keep getting
+        # Entry ... defines an 'urldate' field, but no 'url' field.
+        # for arXiv entries
+        ignore_warnings = Logging.ConsoleLogger(devnull, Logging.Warn)
+        Logging.with_logger(ignore_warnings) do
+            DocumenterCitations.format_bibliography_reference(biblio.style, biblio.entries[key])
+        end
+    end
+    function _print_entry(io, biblio, key; links = false, kws...)
+        print(io, html(Markdown.parse(citation_reference(biblio, key))))
+    end
+	function bibrefs(biblio, key::String; kws...)
 		io = IOBuffer()
 		println(io, "<p style=\"font-size:12px\">")
-		_print_entry(io, key; kws...)
+		_print_entry(io, biblio, key; kws...)
 		println(io, "</p>")
 		return HTML(String(take!(io)))
 	end
-	function bib(keys::Vector{String}; kws...)
+	function bibrefs(biblio, keys::Vector{String}; kws...)
 		io = IOBuffer()
 		println(io, "<p style=\"font-size:12px\">")
 		for key in keys
-			_print_entry(io, key; kws...)
+			_print_entry(io, biblio, key; kws...)
 			println(io, "<br/>")
 		end
 		println(io, "</p>")
