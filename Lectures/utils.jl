@@ -20,11 +20,17 @@ begin
         # for arXiv entries
         ignore_warnings = Logging.ConsoleLogger(devnull, Logging.Warn)
         Logging.with_logger(ignore_warnings) do
-            DocumenterCitations.format_bibliography_reference(biblio.style, biblio.entries[key])
+            # `DocumenterCitations` writes a `+` in the label after 3 authors so we use
+            # `et_al = 3` for consistency
+            DocumenterCitations.format_labeled_bibliography_reference(biblio.style, biblio.entries[key], et_al = 3)
         end
     end
+    # Markdown creates a `<p>` surrounding it but we don't want that in some cases
+    _inline_markdown(m::Markdown.MD) = sprint(Markdown.htmlinline, m.content[].content)
     function _print_entry(io, biblio, key; links = false, kws...)
-        print(io, html(Markdown.parse(citation_reference(biblio, key))))
+        print(io, citation_label(biblio, key))
+        print(io, ' ')
+        println(io, _inline_markdown(Markdown.parse(citation_reference(biblio, key))))
     end
 	function bibrefs(biblio, key::String; kws...)
 		io = IOBuffer()
