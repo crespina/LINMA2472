@@ -278,22 +278,11 @@ frametitle("Cost of LLMs")
 # ╔═╡ 8d6ec2b3-997e-4df5-a3b2-c1dffa53d0ec
 md"Homework for next week : What is the inference cost of LLMs with respect to ``d_\text{emb}``, ``n_\text{voc}``, ``n_\text{ctx}``, ``d_\text{ff}``, ``h`` and ``N`` ?"
 
-# ╔═╡ 0aeaf091-167e-44f3-9d58-4ad127fd7cc0
-@warn "do you hear me ?"
-
 # ╔═╡ f572e113-b36b-4a6b-96c7-c26f100e1ad4
 md"## Utils"
 
 # ╔═╡ f6f7376e-9984-4289-b8ff-9d47e5358791
 import DocumenterCitations, CSV, Logging
-
-# ╔═╡ 76bc0a2b-9eec-45ad-a638-88e2341527be
-ignore_warnings = Logging.ConsoleLogger(devnull, Logging.Warn)
-
-# ╔═╡ 502ef06e-d9dd-4d69-93ce-dc7ff645cff1
-Logging.with_logger(ignore_warnings) do
-	@warn "do you hear me ?"
-end
 
 # ╔═╡ 1d5b1b7c-828c-4a16-b446-cff21b015d45
 biblio = load_biblio!()
@@ -1783,9 +1772,6 @@ version = "3.5.0+0"
 # ╟─4dd7083a-e730-4f4b-bde8-fc1a5b08ebfc
 # ╟─a5b20939-9afa-48c0-aa67-cbca6bc99804
 # ╟─8d6ec2b3-997e-4df5-a3b2-c1dffa53d0ec
-# ╠═76bc0a2b-9eec-45ad-a638-88e2341527be
-# ╠═502ef06e-d9dd-4d69-93ce-dc7ff645cff1
-# ╠═0aeaf091-167e-44f3-9d58-4ad127fd7cc0
 # ╟─f572e113-b36b-4a6b-96c7-c26f100e1ad4
 # ╠═32621224-a782-4bf6-9570-562cf2bb7360
 # ╠═f6f7376e-9984-4289-b8ff-9d47e5358791
